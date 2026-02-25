@@ -1,52 +1,39 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
+    <form method="POST" action="{{ route('register') }}" class="space-y-2">
         @csrf
 
-        <!-- Name -->
         <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+            <label class="block text-[11px] text-gray-500 mb-1.5 ml-1 uppercase font-bold">Votre Nom</label>
+            <x-text-input id="name" class="block w-full py-2.5 text-sm" type="text" name="name" :value="old('name')" required placeholder="Prénom Nom" />
+            <x-input-error :messages="$errors->get('name')" class="mt-1 text-[10px]" />
         </div>
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        <div>
+            <label class="block text-[11px] text-gray-500 mb-1.5 ml-1 uppercase font-bold">Email</label>
+            <x-text-input id="email" class="block w-full py-2.5 text-sm" type="email" name="email" :value="old('email')" required placeholder="contact@coloc.com" />
+            <x-input-error :messages="$errors->get('email')" class="mt-1 text-[10px]" />
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-[11px] text-gray-500 mb-1.5 ml-1 uppercase font-bold">Mot de passe</label>
+                <x-text-input id="password" class="block w-full py-2.5 text-sm" type="password" name="password" required placeholder="••••••" />
+            </div>
+            <div>
+                <label class="block text-[11px] text-gray-500 mb-1.5 ml-1 uppercase font-bold">Confirmation</label>
+                <x-text-input id="password_confirmation" class="block w-full py-2.5 text-sm" type="password" name="password_confirmation" required placeholder="••••••" />
+            </div>
+        </div>
+        <x-input-error :messages="$errors->get('password')" class="mt-1 text-[10px]" />
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        <div class="pt-4">
+            <x-primary-button class="py-3.5 text-xs">Créer mon espace</x-primary-button>
         </div>
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
+        <div class="text-center pt-1">
+            <a href="{{ route('login') }}" class="text-[11px] text-gray-600 hover:text-white transition-colors uppercase font-bold tracking-widest">
+                Déjà membre ? Connexion
             </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
         </div>
     </form>
 </x-guest-layout>

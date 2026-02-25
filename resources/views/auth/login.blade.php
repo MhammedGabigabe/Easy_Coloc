@@ -1,47 +1,40 @@
 <x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
-
-    <form method="POST" action="{{ route('login') }}">
+    <form method="POST" action="{{ route('login') }}" class="space-y-4">
         @csrf
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        <div class="group">
+            <label class="block text-[11px] text-gray-500 mb-1.5 ml-1 uppercase font-bold tracking-wider group-focus-within:text-easy-blue transition-colors">Identifiant</label>
+            <x-text-input id="email" class="block w-full bg-slate-900/40 border-slate-700/50 focus:bg-slate-900 text-sm py-2.5 rounded-xl transition-all" type="email" name="email" :value="old('email')" required autofocus placeholder="nom@exemple.com" />
+            <x-input-error :messages="$errors->get('email')" class="mt-1 text-[11px]" />
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        <div class="group">
+            <div class="flex justify-between items-end mb-1.5">
+                <label class="block text-[11px] text-gray-500 ml-1 uppercase font-bold tracking-wider group-focus-within:text-easy-blue transition-colors">Mot de passe</label>
+                @if (Route::has('password.request'))
+                    <a class="text-[10px] text-gray-600 hover:text-white transition-colors" href="{{ route('password.request') }}">Oublié ?</a>
+                @endif
+            </div>
+            <x-text-input id="password" class="block w-full bg-slate-900/40 border-slate-700/50 focus:bg-slate-900 text-sm py-2.5 rounded-xl transition-all" type="password" name="password" required placeholder="••••••••" />
         </div>
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
+        <div class="flex items-center ml-1">
+            <label for="remember_me" class="inline-flex items-center cursor-pointer">
+                <input id="remember_me" type="checkbox" class="rounded border-slate-700 bg-slate-800 text-easy-blue focus:ring-easy-blue w-3.5 h-3.5" name="remember">
+                <span class="ms-2 text-xs text-gray-500">Mémoriser ma session</span>
             </label>
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
-
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
+        <div class="pt-2">
+            <x-primary-button class="py-3.5 rounded-xl shadow-lg shadow-easy-blue/20 hover:shadow-easy-blue/40 transform active:scale-95 transition-all text-xs">
+                Connecter
             </x-primary-button>
+        </div>
+
+        <div class="text-center pt-2">
+            <a href="{{ route('register') }}" class="text-[11px] text-gray-500 hover:text-easy-blue transition-colors font-medium border-b border-transparent hover:border-easy-blue pb-0.5">
+                Rejoindre l'aventure &rarr;
+            </a>
         </div>
     </form>
 </x-guest-layout>
