@@ -15,9 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->rememberToken();
+            $table->float('solde')->default(0);
+            $table->enum('role', ['user', 'admin', 'membre', 'owner'])->default('user');
+            $table->integer('reputation')->default(0);
+            $table->string('photo')->nullable();
+            $table->boolean('is_member')->default(false);
             $table->timestamps();
         });
 
