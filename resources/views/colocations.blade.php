@@ -1,8 +1,7 @@
 <x-app-layout>
-    <!-- Initialisation d'Alpine.js pour le Popup -->
-    <div x-data="{ openCreateModal: false }" class="px-4 py-8 sm:px-6 lg:px-8 bg-[#f8fafc] h-screen overflow-hidden relative">
+    <div x-data="{ openCreateModal: false }" class="px-4 py-8 sm:px-6 lg:px-8 bg-[#f8fafc] min-h-screen overflow-y-auto relative">
         
-        <!-- HEADER DE LA PAGE -->
+        <!-- HEADER DE LA PAGE (Inchangé) -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
             <div>
                 <h2 class="text-3xl font-black uppercase italic tracking-tighter text-slate-800">
@@ -11,13 +10,11 @@
                 <p class="text-slate-400 text-xs font-bold uppercase tracking-[0.2em] mt-1 italic">Gérez vos espaces de vie commune</p>
             </div>
 
-            <!-- Profil Utilisateur -->
             <div class="flex items-center space-x-4">
                 <div class="text-right leading-tight hidden sm:block">
                     <p class="text-[10px] font-black uppercase tracking-widest text-slate-800 italic">{{ Auth::user()->name }}</p>
                     <p class="text-[9px] font-black text-emerald-500 uppercase tracking-tighter">En ligne</p>
                 </div>
-                <!-- Initiales dynamiques avec fallback si pas d'espace dans le nom -->
                 <div class="h-10 w-10 bg-slate-900 text-white rounded-xl flex items-center justify-center font-black text-sm border-2 border-white shadow-sm italic transform hover:scale-105 transition-transform cursor-pointer">
                     @php
                         $name = Auth::user()->name;
@@ -31,43 +28,61 @@
             </div>
         </div>
 
-        <!-- BOUTON CREER (Déclenche le popup) -->
+        <!-- BOUTON CREER -->
         <button @click="openCreateModal = true" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-[1.5rem] text-sm font-black shadow-xl shadow-indigo-100 transition-all transform hover:scale-105 active:scale-95 flex items-center space-x-3 uppercase tracking-widest">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
             <span>Nouvelle Colocation</span>
         </button>
 
-        <!-- GRILLE DES COLOCATIONS EXISTANTES -->
+        <!-- GRILLE DES COLOCATIONS -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8 mb-12">
-            @foreach($colocations as $coloc)
-            <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-500 group overflow-hidden">
+            
+            <!-- BOUCLE OWNER -->
+            @foreach($ownedColocations as $coloc)
+            <div class="bg-white rounded-[2.5rem] border-2 border-indigo-50 shadow-sm hover:shadow-xl hover:border-indigo-200 transition-all duration-500 group overflow-hidden">
                 <div class="p-8">
                     <div class="flex justify-between items-start mb-6">
-                        <div class="bg-indigo-50 p-3 rounded-2xl text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <div class="bg-indigo-600 p-3 rounded-2xl text-white shadow-lg shadow-indigo-100">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                         </div>
-                        <span class="bg-indigo-100 text-indigo-600 text-[9px] font-black uppercase px-3 py-1 rounded-full italic tracking-widest">Owner</span>
+                        <span class="bg-slate-900 text-white text-[9px] font-black uppercase px-3 py-1 rounded-full italic tracking-widest shadow-sm">Owner</span>
                     </div>
                     
-                    <h3 class="text-xl font-black text-slate-800 mb-2 italic tracking-tight uppercase">{{ $coloc->nom_coloc}}</h3>
-                    <p class="text-slate-400 text-xs font-medium mb-6">Créée récemment • 1 membre actif</p>
-                    
-                    <div class="flex -space-x-3 mb-8">
-                        <div class="w-10 h-10 rounded-xl bg-slate-900 border-2 border-white flex items-center justify-center text-[10px] font-black text-white italic">{{ $initials }}</div>
-                    </div>
+                    <h3 class="text-xl font-black text-slate-800 mb-2 italic tracking-tight uppercase">{{ $coloc->nom_coloc }}</h3>
+                    <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-6">Vous êtes l'administrateur</p>
+
                 </div>
                 <div class="bg-slate-50 p-4 px-8 flex justify-between items-center group-hover:bg-indigo-50 transition-colors">
-                    <a href="{{ route('colocations.show', $coloc->id) }}" class="text-[10px] font-black uppercase text-indigo-600 hover:underline tracking-widest italic">Gérer &rarr;</a>
+                    <a href="{{ route('colocations.show', $coloc->id) }}" class="text-[10px] font-black uppercase text-indigo-600 hover:text-indigo-800 tracking-widest italic">Gérer la coloc &rarr;</a>
                 </div>
-            
+            </div>
+            @endforeach
+
+            <!-- BOUCLE MEMBER -->
+            @foreach($memberships as $membership)
+            @php $coloc = $membership->colocation; @endphp
+            <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-500 group overflow-hidden opacity-90 hover:opacity-100">
+                <div class="p-8">
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="bg-slate-100 p-3 rounded-2xl text-slate-500 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        </div>
+                        <span class="bg-indigo-50 text-indigo-600 text-[9px] font-black uppercase px-3 py-1 rounded-full italic tracking-widest">Membre</span>
+                    </div>
+                    
+                    <h3 class="text-xl font-black text-slate-800 mb-2 italic tracking-tight uppercase">{{ $coloc->nom_coloc }}</h3>
+                    <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-6">Membre depuis le {{ \Carbon\Carbon::parse($membership->joined_at)->format('d/m/Y') }}</p>
+
+                </div>
+                <div class="bg-slate-50 p-4 px-8 flex justify-between items-center group-hover:bg-indigo-50 transition-colors">
+                    <a href="{{ route('colocations.show', $coloc->id) }}" class="text-[10px] font-black uppercase text-indigo-600 hover:text-indigo-800 tracking-widest italic">Consulter la coloc &rarr;</a>
+                </div>
             </div>
             @endforeach
 
         </div>
 
-        <!-- ========================================== -->
-        <!-- POPUP (MODAL) DE CRÉATION -->
-        <!-- ========================================== -->
+        <!-- POPUP -->
         <div x-show="openCreateModal" 
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0 scale-95"
@@ -82,7 +97,6 @@
                 <div @click.away="openCreateModal = false" 
                      class="relative bg-white w-full max-w-md rounded-[3rem] shadow-[0_30px_80px_rgba(0,0,0,0.4)] overflow-hidden border border-white">
 
-                    <!-- Formulaire (Un seul input comme demandé) -->
                     <form action="{{ route('colocations.store') }}" method="POST" class="p-10 space-y-8">
                         @csrf
                         <div>

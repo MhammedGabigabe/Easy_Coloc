@@ -4,7 +4,7 @@
 
         <div class="group">
             <label class="block text-[11px] text-gray-500 mb-1.5 ml-1 uppercase font-bold tracking-wider group-focus-within:text-easy-blue transition-colors">Identifiant</label>
-            <x-text-input id="email" class="block w-full bg-slate-900/40 border-slate-700/50 focus:bg-slate-900 text-sm py-2.5 rounded-xl transition-all" type="email" name="email" :value="old('email')" required autofocus placeholder="nom@exemple.com" />
+            <x-text-input id="email" class="block w-full bg-slate-900/40 border-slate-700/50 focus:bg-slate-900 text-sm py-2.5 rounded-xl transition-all" type="email" name="email" :value=" old('email')" required autofocus placeholder="nom@exemple.com" />
             <x-input-error :messages="$errors->get('email')" class="mt-1 text-[11px]" />
         </div>
 
