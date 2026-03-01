@@ -17,7 +17,7 @@
             @if (Route::has('login'))
                 <div class="space-x-8">
                     @auth
-                        <a href="{{ url('/dashboard') }}" class="text-sm font-medium hover:text-easy-blue transition">Tableau de bord</a>
+                        <a href="{{ url('/colocations') }}" class="text-sm font-medium hover:text-easy-blue transition">Tableau de bord</a>
                     @else
                         <a href="{{ route('login') }}" class="text-sm font-medium hover:text-easy-blue transition">Se connecter</a>
                         <a href="{{ route('register') }}" class="bg-easy-blue hover:bg-blue-500 px-6 py-2.5 rounded-full text-sm font-bold transition shadow-lg shadow-blue-500/20">Rejoindre</a>
