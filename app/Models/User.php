@@ -21,6 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'reputation',
+        'is_banned',
     ];
 
     /**
@@ -45,4 +48,29 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function activeColocation()
+    {
+        return $this->belongsToMany(Colocation::class, 'memberships', 'user_id', 'colocation_id')
+                    ->wherePivot('left_at', null)
+                    ->where('status', 'active')
+                    ->first();
+    }
+
+    public function memberShips()
+    {
+        return $this->hasMany(MemberShip::class);
+    }
+
+    public function depensesPayees()
+    {
+        return $this->hasMany(Depense::class, 'createur_id');
+    }
+
+    public function isGlobalAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+
 }
