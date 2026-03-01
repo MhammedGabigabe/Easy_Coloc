@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 
+
 class Colocation extends Model
 {
     use SoftDeletes;
@@ -41,7 +42,7 @@ class Colocation extends Model
 
     public function categories()
     {
-        return $this->belongsToMany(Categorie::class, 'categorie_colocation');
+        return $this->belongsToMany(Categorie::class, 'categorie_colocation', 'colocation_id', 'categorie_id');
     }
 
     public function invitations()

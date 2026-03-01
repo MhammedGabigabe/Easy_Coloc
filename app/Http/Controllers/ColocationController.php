@@ -21,10 +21,11 @@ class ColocationController extends Controller
 
         $ownedColocations = Colocation::where('owner_id', $userId)->get();
 
-        $memberships = Membership::where('user_id', $userId)
+        $memberships = Membership::with('colocation')
+            ->where('user_id', $userId) 
+            ->whereHas('colocation')     
             ->whereNotIn('colocation_id', $ownedColocations->pluck('id'))
             ->whereNull('left_at')
-            ->with('colocation')
             ->get();
 
         return view('colocations', compact('ownedColocations', 'memberships'));
@@ -68,7 +69,7 @@ class ColocationController extends Controller
      */
     public function show(string $id)
     {
-        $colocation = Colocation::findOrFail($id);
+        $colocation = Colocation::with(['memberships', 'categories'])->findOrFail($id);
         return view('colocation_show', compact('colocation'));
     }
 
@@ -96,12 +97,13 @@ class ColocationController extends Controller
         $colocation = Colocation::findOrFail($id);
 
         if ($colocation->owner_id !== Auth::id()) {
-            return redirect()->back()->with('error', 'Action non autorisée.');
+            abort(403, 'Seul le propriétaire peut annuler la colocation.');
         }
 
-        $colocation->delete();
+        $colocation->update(['status' => 'cancelled']);
 
-        return redirect()->route('colocations.index');
+        return redirect()->route('colocations.index')
+            ->with('success', 'La colocation a été annulée avec succès.');
     }
 
     public function leave(Colocation $colocation)
@@ -117,5 +119,15 @@ class ColocationController extends Controller
         // Si dette > 0 -> reputation -1, sinon +1
 
         return redirect()->route('colocations.index')->with('success', 'Vous avez quitté la colocation.');
+    }
+
+    public function removeMember(Colocation $colocation, Membership $membership) {
+        // Sécurité : seul l'owner peut faire ça
+        if (Auth::id() !== $colocation->owner_id) abort(403);
+
+        // TODO: Si le membre a des dettes, les réattribuer à l'owner (règle 5.5)
+        // $membership->update(['left_at' => now()]);
+        
+        return back()->with('success', 'Membre retiré.');
     }
 }

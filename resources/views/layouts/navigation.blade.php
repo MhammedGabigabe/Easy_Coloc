@@ -46,14 +46,4 @@
         </form>
     </nav>
 
-    <!-- Widget Réputation (Bas de sidebar) -->
-    <div class="p-6">
-        <div class="bg-slate-900 rounded-[2rem] p-5 text-white shadow-xl">
-            <p class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500 mb-2 italic">Votre réputation</p>
-            <h4 class="text-lg font-black tracking-tighter text-indigo-100">+0 points</h4>
-            <div class="w-full bg-slate-800 rounded-full h-1.5 mt-4 overflow-hidden">
-                <div class="bg-indigo-500 h-full w-[15%]" style="box-shadow: 0 0 10px rgba(99, 102, 241, 0.5)"></div>
-            </div>
-        </div>
-    </div>
 </aside>
