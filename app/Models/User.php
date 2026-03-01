@@ -62,6 +62,11 @@ class User extends Authenticatable
         return $this->hasMany(MemberShip::class);
     }
 
+    public function colocationsOwned()
+    {
+        return $this->hasMany(Colocation::class, 'owner_id');
+    }
+
     public function depensesPayees()
     {
         return $this->hasMany(Depense::class, 'createur_id');

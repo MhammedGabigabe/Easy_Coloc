@@ -75,9 +75,6 @@ class InvitationController extends Controller
             abort(403, "Cet email ne correspond pas à l'invitation.");
         }
 
-        $invitation->status_inv = 'accepte';
-        $invitation->save();
-
         $hasActiveColoc = Membership::where('user_id', $user->id)
             ->whereNull('left_at')
             ->exists();
@@ -85,6 +82,9 @@ class InvitationController extends Controller
         if ($hasActiveColoc) {
             return redirect()->route('colocations.index');
         }
+
+        $invitation->status_inv = 'accepte';
+        $invitation->save();
 
         Membership::create([
             'colocation_id' => $invitation->colocation_id,

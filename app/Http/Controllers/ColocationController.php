@@ -5,21 +5,29 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Colocation;
+use App\Models\Membership;
 use Illuminate\Support\Str;
 use App\Http\Requests\StoreColocationRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+
 
 class ColocationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $colocations = Colocation::where('owner_id', auth()->id())
-                ->latest()
-                ->paginate(3);
-        return view('colocations', compact('colocations'));
+        $userId = auth()->id();
+
+        $ownedColocations = Colocation::where('owner_id', $userId)->get();
+
+        $memberships = Membership::where('user_id', $userId)
+            ->whereNotIn('colocation_id', $ownedColocations->pluck('id'))
+            ->whereNull('left_at')
+            ->with('colocation')
+            ->get();
+
+        return view('colocations', compact('ownedColocations', 'memberships'));
     }
 
     /**
@@ -33,14 +41,26 @@ class ColocationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
     public function store(StoreColocationRequest $request)
     {
 
-        Colocation::create([
-            'nom_coloc' => $request->validated('nom_coloc'),
-            'owner_id' => Auth::id(),
-        ]);
-        return redirect()->route('colocations.index');
+        return DB::transaction(function () use ($request) {
+            
+            $colocation = Colocation::create([
+                'nom_coloc' => $request->validated('nom_coloc'),
+                'owner_id' => Auth::id(),
+            ]);
+
+            Membership::create([
+                'colocation_id' => $colocation->id,
+                'user_id'     => Auth::id(), 
+                'role_coloc'    => 'owner',
+                'joined_at'     => now(),    
+            ]);
+            
+            return redirect()->route('colocations.index');
+        });
     }
 
     /**
@@ -82,5 +102,20 @@ class ColocationController extends Controller
         $colocation->delete();
 
         return redirect()->route('colocations.index');
-        }
+    }
+
+    public function leave(Colocation $colocation)
+    {
+        $membership = Membership::where('colocation_id', $colocation->id)
+            ->where('user_id', auth()->id())
+            ->whereNull('left_at')
+            ->firstOrFail();
+
+        $membership->update(['left_at' => now()]);
+
+        // TODO: Gérer ici la logique de réputation (Scénario 3 du projet)
+        // Si dette > 0 -> reputation -1, sinon +1
+
+        return redirect()->route('colocations.index')->with('success', 'Vous avez quitté la colocation.');
+    }
 }

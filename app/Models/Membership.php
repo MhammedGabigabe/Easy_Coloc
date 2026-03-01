@@ -17,7 +17,7 @@ class Membership extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'membre_id');
+        return $this->belongsTo(User::class, 'user_id');
     } 
     
     public function colocation()
