@@ -28,6 +28,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        if (session()->has('invitation_token')) {
+            $token = session()->pull('invitation_token');
+            return redirect()->route('invitation.response', $token);
+        }
+
         return redirect()->intended(route('colocations.index', absolute: false));
     }
 

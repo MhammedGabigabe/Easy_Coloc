@@ -10,7 +10,7 @@
 
         <div>
             <label class="block text-[11px] text-gray-500 mb-1.5 ml-1 uppercase font-bold">Email</label>
-            <x-text-input id="email" class="block w-full py-2.5 text-sm" type="email" name="email" :value="old('email')" required placeholder="contact@coloc.com" />
+            <x-text-input id="email" class="block w-full py-2.5 text-sm" type="email" name="email" :value="$email ?? old('email')" required placeholder="contact@coloc.com" :readonly="isset($email)" />
             <x-input-error :messages="$errors->get('email')" class="mt-1 text-[10px]" />
         </div>
 

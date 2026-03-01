@@ -19,7 +19,9 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        //dd(session()->all());
+        $email = session('invitation_email');
+        return view('auth.register', compact('email'));
     }
 
     /**
@@ -29,11 +31,17 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        $invitationEmail = session('invitation_email');
+
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
+
+        if ($invitationEmail && $request->email !== $invitationEmail) {
+            abort(403, 'Email invalide pour cette invitation.');
+        }
 
         if(User::count() == 0){
             $user = User::create([
@@ -53,6 +61,12 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
 
         Auth::login($user);
+
+        if (session()->has('invitation_token')) {
+            $token = session()->pull('invitation_token');
+            session()->forget('invitation_email');
+            return redirect()->route('invitation.response', $token);
+        }
 
         return redirect(route('colocations.index', absolute: false));
     }

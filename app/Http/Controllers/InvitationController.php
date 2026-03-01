@@ -40,14 +40,26 @@ class InvitationController extends Controller
 
         Mail::to($request->email)->send(new InvitationMail($data));
 
-        // return redirect()->route('colocations.show', $request->coloc_id);
-        return back()->with('success', 'Invitation envoyée !');
+        return back();
     }
     
     public function showResponsePage($token)
     {
-        $invitation = Invitation::where('token_email', $token)->where('status_inv', 'en_attente')->firstOrFail();
-        
+        $invitation = Invitation::where('token_email', $token)
+            ->where('status_inv', 'en_attente')
+            ->firstOrFail();
+
+        if (!auth()->check()) {
+            session([
+                'invitation_token' => $token,
+                'invitation_email' => $invitation->email]);
+            return redirect()->route('register');
+        }
+
+        if (auth()->user()->email !== $invitation->email) {
+            abort(403);
+        }
+
         $colocation = $invitation->colocation;
 
         return view('invitation_response', compact('invitation', 'colocation'));
@@ -55,15 +67,23 @@ class InvitationController extends Controller
 
     public function accept( $token)
     {
+        
         $invitation = Invitation::where('token_email', $token)->firstOrFail();
         $user = auth()->user();
+
+        if ($user->email !== $invitation->email) {
+            abort(403, "Cet email ne correspond pas à l'invitation.");
+        }
+
+        $invitation->status_inv = 'accepte';
+        $invitation->save();
 
         $hasActiveColoc = Membership::where('user_id', $user->id)
             ->whereNull('left_at')
             ->exists();
 
         if ($hasActiveColoc) {
-            return redirect()->route('colocations.index')->with('error', 'Vous avez déjà une colocation active.');
+            return redirect()->route('colocations.index');
         }
 
         Membership::create([
@@ -73,17 +93,15 @@ class InvitationController extends Controller
             'joined_at' => now(),
         ]);
 
-        $invitation->update(['status_inv' => 'accepte']);
-
-        return redirect()->route('colocations.show', $invitation->colocation_id)
-                        ->with('success', 'Bienvenue dans la colocation !');
+        return redirect()->route('colocations.show', $invitation->colocation_id);
     }
 
     public function refuse($token)
     {
         $invitation = Invitation::where('token_email', $token)->firstOrFail();
-        $invitation->update(['status_inv' => 'refuse']);
+        $invitation->status_inv = 'refuse';
+        $invitation->save();
 
-        return redirect()->route('colocations.index')->with('info', 'Invitation refusée.');
+        return redirect()->route('colocations.index');
     }
 }

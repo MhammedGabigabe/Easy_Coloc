@@ -20,13 +20,16 @@ Route::get('/colocations', [ColocationController::class, 'index'])->name('coloca
 Route::get('/colocations/{id}', [ColocationController::class, 'show'])->name('colocations.show');
 Route::delete('/colocations/{id}', [ColocationController::class, 'destroy'])->name('colocations.destroy');
 
-Route::post('/invitation', [InvitationController::class, 'sendInvitation'])->name('invitation.invite');
+Route::post('/invitation', [InvitationController::class, 'sendInvitation'])
+    ->middleware(['auth'])->name('invitation.invite');
+
 Route::get('/invitation/response/{token}', [InvitationController::class, 'showResponsePage'])
-    ->middleware(['auth'])
     ->name('invitation.response');
+
 Route::post('/invitation/accept/{token}', [InvitationController::class, 'accept'])
     ->middleware(['auth'])
     ->name('invitation.accept');
+    
 Route::post('/invitation/refuse/{token}', [InvitationController::class, 'refuse'])
     ->middleware(['auth'])
     ->name('invitation.refuse');        
