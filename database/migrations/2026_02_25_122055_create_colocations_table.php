@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('colocations', function (Blueprint $table) {
             $table->id();
             $table->string('nom_coloc');
-            $table->boolean('statut_coloc')->default(true);
-            $table->uuid('token_coloc')->unique();
+            $table->enum('status', ['active', 'cancelled'])->default('active');
             $table->foreignId('owner_id')->constrained('users')->onDelete('cascade');
+            $table->datetime('date_creation')->useCurrent();
             $table->timestamps();
         });
     }

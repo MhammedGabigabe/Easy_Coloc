@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('colocation_member', function (Blueprint $table) {
+        Schema::create('categorie_colocation', function (Blueprint $table) {
             $table->foreignId('colocation_id')->constrained('colocations')->onDelete('cascade');
-            $table->foreignId('membre_id')->constrained('users')->onDelete('cascade');
-            $table->datetime('left_at');
-            $table->datetime('joined_at');
-            $table->primary(['colocation_id', 'membre_id']);
+            $table->foreignId('categorie_id')->constrained('categories')->onDelete('cascade');
+            $table->primary(['colocation_id', 'categorie_id']);
         });
     }
 
@@ -25,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('member_ships');
+        Schema::dropIfExists('categorie_colocation');
     }
 };

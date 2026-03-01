@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('dettes', function (Blueprint $table) {
             $table->id();
-            $table->float('montant_a_payer');
-            $table->datetime('date_paiement');
+            $table->foreignId('membership_id')->constrained('memberships')->onDelete('cascade');            
+            $table->foreignId('depense_id')->constrained('depenses')->onDelete('cascade');
+            $table->decimal('montant_a_payer', 10,2);
+            $table->datetime('date_paiement')->nullable();
             $table->boolean('statut_dette')->default(false);
             $table->timestamps();
         });

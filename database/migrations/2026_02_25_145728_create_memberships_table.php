@@ -11,11 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('membres', function (Blueprint $table) {
+        Schema::create('memberships', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('colocation_id')->constrained('colocations')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->boolean('is_banned')->default(false);
+            $table->enum('role_coloc', ['owner', 'member']);
+            $table->datetime('left_at')->nullable();
+            $table->datetime('joined_at')->useCurrent();
+            $table->unique(['colocation_id', 'user_id']);
             $table->timestamps();
+
         });
     }
 
@@ -24,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('personnes');
+        Schema::dropIfExists('memberships');
     }
 };

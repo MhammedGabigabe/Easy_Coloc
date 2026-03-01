@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('depenses', function (Blueprint $table) {
             $table->id();
             $table->string('titre');
-            $table->float('montant');
+            $table->decimal('montant',10,2);
             $table->foreignId('createur_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('colocation_id')->constrained()->onDelete('cascade');
+            $table->foreignId('categorie_id')->constrained()->onDelete('cascade');
             $table->datetime('date_depense');
         });
     }

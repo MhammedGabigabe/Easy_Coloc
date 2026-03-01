@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('email');
             $table->uuid('token_email')->unique();
-            $table->boolean('statut_inv')->default(false);
+            $table->enum('status_inv', ['en_attente', 'accepte', 'refuse'])
+                ->default('en_attente');
             $table->foreignId('colocation_id')->constrained('colocations')->onDelete('cascade');
             $table->timestamps();
         });

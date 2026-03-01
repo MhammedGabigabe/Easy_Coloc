@@ -16,12 +16,13 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
-            $table->float('solde')->default(0);
-            $table->enum('role', ['user', 'admin', 'membre', 'owner'])->default('user');
+            $table->decimal('solde', 10, 2)->default(0);
+            $table->enum('role', ['user', 'admin'])->default('user');
             $table->integer('reputation')->default(0);
-            $table->string('photo')->nullable();
-            $table->boolean('is_member')->default(false);
+            $table->boolean('is_banned')->default(false);
+            $table->rememberToken();
             $table->timestamps();
+
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
