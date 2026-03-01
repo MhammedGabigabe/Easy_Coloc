@@ -14,6 +14,13 @@
             </div>
         @endif
 
+        @if(session('success'))
+            <div class="mt-4 p-4 bg-emerald-50 border border-emerald-100 rounded-2xl flex items-center space-x-3 shadow-sm animate-bounce">
+                <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <p class="text-emerald-600 text-[10px] font-black uppercase tracking-widest italic">{{ session('success') }}</p>
+            </div>
+        @endif
+
         <!-- HEADER -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center pt-8 mb-8 gap-4 shrink-0">
             <div class="flex items-center space-x-4">
@@ -54,6 +61,7 @@
             @endif
         </div>
 
+
         <!-- GRILLE DES MEMBRES -->
         <div class="mb-12">
             <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300 mb-6 italic px-2">Membres ({{ $colocation->memberships->count() }})</h4>
@@ -62,6 +70,7 @@
                 <div class="bg-white rounded-[2.2rem] p-6 border border-slate-100 shadow-sm flex items-center justify-between group transition-all hover:border-indigo-100">
                     <div class="flex items-center space-x-4">
                         @php
+                            $userRep = $membership->user->reputation ?? 0;
                             $nameParts = explode(' ', trim($membership->user->name ?? 'User'));
                             $initials = strtoupper(substr($nameParts[0], 0, 1) . (isset($nameParts[1]) ? substr($nameParts[1], 0, 1) : ''));
                         @endphp
@@ -76,16 +85,18 @@
                                     <span class="text-[9px] text-indigo-500 lowercase ml-1 font-bold italic">(vous)</span>
                                 @endif
                             </p>
-                            <span class="text-[8px] font-black text-slate-400 uppercase tracking-tighter">
-                                {{ $membership->role_coloc === 'owner' ? 'Propriétaire' : 'Colocataire' }}
-                            </span>
-                            <span class="text-[8px] font-black {{ ($membership->user->reputation ?? 0) >= 0 ? 'text-emerald-500 bg-emerald-50' : 'text-red-500 bg-red-50' }} px-1.5 py-0.5 rounded-md italic">
-                                Rép: {{ ($membership->user->reputation ?? 0) >= 0 ? '+' : '' }}{{ $membership->user->reputation ?? 0 }}
-                            </span>
+                            <div class="flex items-center mt-1 space-x-2">
+                                <span class="text-[8px] font-black text-slate-400 uppercase tracking-tighter">
+                                    {{ $membership->role_coloc }}
+                                </span>
+                                <!-- LOGIQUE DE RÉPUTATION : ROUGE SI < 0, VERT SI >= 0 -->
+                                <span class="text-[8px] font-black {{ $userRep < 0 ? 'text-red-600 bg-red-50 border border-red-100' : 'text-emerald-600 bg-emerald-50 border border-emerald-100' }} px-2 py-0.5 rounded-md italic">
+                                    Rép: {{ $userRep > 0 ? '+' : '' }}{{ $userRep }}
+                                </span>
+                            </div>
                         </div>
                     </div>
 
-                    {{-- BOUTON RETIRER : Uniquement si OWNER et si l'utilisateur sur la carte n'est pas l'OWNER connecté --}}
                     @if(!$isCancelled && $isOwner && $membership->user_id !== Auth::id())
                         <form action="{{ route('colocations.remove-member', [$colocation->id, $membership->id]) }}" method="POST" onsubmit="return confirm('Retirer ce membre ?');">
                             @csrf

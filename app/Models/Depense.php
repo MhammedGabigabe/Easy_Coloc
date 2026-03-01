@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Depense extends Model
 {
+    public $timestamps = false;
+    
     protected $fillable = [
         'titre', 
         'montant', 

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\ColocationController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\CategorieController;
+use App\Http\Controllers\DepenseController;
 
 Route::get('/', function () {
     return view('welcome');
