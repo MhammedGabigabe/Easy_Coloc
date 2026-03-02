@@ -15,7 +15,7 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return redirect()->route('colocations.index');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::post('/colocations', [ColocationController::class, 'store'])->name('colocations.store');

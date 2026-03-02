@@ -131,7 +131,7 @@ class ColocationController extends Controller
         $colocation = Colocation::findOrFail($id);
 
         if ($colocation->owner_id !== Auth::id()) {
-            abort(403, 'Seul le propriétaire peut annuler la colocation.');
+            abort(403, 'Seul le owner peut annuler la colocation.');
         }
 
         $colocation->update(['status' => 'cancelled']);
