@@ -111,15 +111,5 @@ class DepenseController extends Controller
         //
     }
 
-    public function payerDette($detteId)
-    {
-        $dette = Dette::findOrFail($detteId);
-        
-        $dette->update([
-            'statut_dette' => true,
-            'date_paiement' => now()
-        ]);
 
-        return back()->with('success', 'Remboursement enregistré !');
-    }
 }

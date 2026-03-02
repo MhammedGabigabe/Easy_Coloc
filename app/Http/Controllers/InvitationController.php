@@ -80,7 +80,7 @@ class InvitationController extends Controller
             ->exists();
 
         if ($hasActiveColoc) {
-            return redirect()->route('colocations.index');
+            return redirect()->route('colocations.index')->with('error', 'Vous avez deja une colocation active.');
         }
 
         $invitation->status_inv = 'accepte';
@@ -93,7 +93,7 @@ class InvitationController extends Controller
             'joined_at' => now(),
         ]);
 
-        return redirect()->route('colocations.show', $invitation->colocation_id);
+        return redirect()->route('colocations.show', $invitation->colocation_id)->with('success', 'Invitation acceptée !')  ;
     }
 
     public function refuse($token)

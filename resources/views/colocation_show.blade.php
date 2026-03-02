@@ -6,7 +6,6 @@
 
     <div x-data="{ openInviteModal: false, openCategoryModal: false, openExpenseModal: false }" class="px-4 sm:px-6 lg:px-8 bg-[#f8fafc] min-h-screen overflow-y-auto relative pb-20">
         
-        <!-- ALERT SI ANNULÉE -->
         @if($isCancelled)
             <div class="mt-6 p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center space-x-3">
                 <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
@@ -161,8 +160,8 @@
                     <div class="bg-white/20 backdrop-blur-md rounded-2xl p-4 border border-white/30 shadow-sm">
                         <p class="text-[9px] text-indigo-100 font-black uppercase tracking-widest mb-1">À rembourser</p>
                         <p class="text-xs text-white font-medium">
-                            Vous devez <span class="font-black">{{$dette->montant_a_payer }} DH</span> 
-                            à <span class="underline">{{ $dette->depense->payeur->name }}</span>
+                            {{$dette->membership->user->name}} doit payé <span class="font-black">{{$dette->montant_a_payer }} DH</span> 
+                            à <span >{{ $dette->depense->payeur->name }}</span>
                         </p>
                         
                         <form action="{{ route('dettes.payer', $dette->id) }}" method="POST" class="mt-3">
@@ -179,10 +178,10 @@
                         <div class="flex justify-between items-start">
                             <div>
                                 <p class="text-[9px] text-emerald-300 font-black uppercase tracking-widest mb-1">À recevoir</p>
-                                <p class="text-xs text-white font-medium">
-                                    <span class="font-black">{{ $dette->membership->user->name }}</span> 
-                                    vous doit <span class="font-black text-emerald-400">{{ number_format($dette->montant_a_payer, 2) }} DH</span>
-                                </p>
+                        <p class="text-xs text-white font-medium">
+                            {{$dette->membership->user->name}} doit payé <span class="font-black">{{$dette->montant_a_payer }} DH</span> 
+                            à <span >{{ $dette->depense->payeur->name }}</span>
+                        </p>
                             </div>
                             <div class="bg-emerald-500/20 p-1 rounded-lg">
                                 <svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path></svg>

@@ -8,6 +8,7 @@ use App\Http\Controllers\ColocationController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\CategorieController;
 use App\Http\Controllers\DepenseController;
+use App\Http\Controllers\DetteController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -48,7 +49,7 @@ Route::post('/colocations/{colocation}/remove/{membership}', [ColocationControll
 Route::post('/colocations/{colocation}/depenses', [DepenseController::class, 'store'])
     ->name('depenses.store');
 
-Route::post('/dettes/{dette}/payer', [DepenseController::class, 'payerDette'])
+Route::post('/dettes/{dette}/payer', [DetteController::class, 'payerDette'])
     ->name('dettes.payer');
 
 Route::middleware('auth')->group(function () {
