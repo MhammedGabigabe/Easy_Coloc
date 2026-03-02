@@ -1,4 +1,10 @@
 <x-guest-layout>
+    @if(session('error_banned'))
+        <div class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            <strong>Accès interdit :</strong>
+            {{ session('error_banned') }}
+        </div>
+    @endif
     <form method="POST" action="{{ route('login') }}" class="space-y-4">
         @csrf
 

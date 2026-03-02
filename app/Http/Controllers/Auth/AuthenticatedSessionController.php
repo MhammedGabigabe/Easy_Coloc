@@ -26,6 +26,11 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
+        if (Auth::user()->is_banned) {
+            Auth::logout();
+            return back()->with('error_banned', "Votre compte a été suspendu par l'administrateur.");
+        }
+
         $request->session()->regenerate();
 
         if (session()->has('invitation_token')) {

@@ -9,6 +9,7 @@ use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\CategorieController;
 use App\Http\Controllers\DepenseController;
 use App\Http\Controllers\DetteController;
+use App\Http\Controllers\AdminController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -51,6 +52,11 @@ Route::post('/colocations/{colocation}/depenses', [DepenseController::class, 'st
 
 Route::post('/dettes/{dette}/payer', [DetteController::class, 'payerDette'])
     ->name('dettes.payer');
+
+Route::middleware(['auth', 'can:admin-access'])->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::post('/admin/users/{user}/toggle-ban', [AdminController::class, 'toggleBan'])->name('admin.users.toggle-ban');
+});    
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
