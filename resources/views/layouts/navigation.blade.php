@@ -46,4 +46,31 @@
         </form>
     </nav>
 
+
+    <div class="p-6">
+        @php
+            $solde = Auth::user()->solde_global;
+        @endphp
+        
+        <div class="{{ $solde >= 0 ? 'bg-slate-900' : 'bg-red-900' }} rounded-[2rem] p-5 text-white shadow-xl transition-colors duration-500">
+            <p class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 italic">Votre solde global</p>
+            
+            <div class="flex items-baseline space-x-1">
+                <h4 class="text-lg font-black tracking-tighter {{ $solde > 0 ? 'text-emerald-400' : ($solde < 0 ? 'text-red-200' : 'text-indigo-100') }}">
+                    {{ $solde > 0 ? '+' : '' }}{{ number_format($solde, 2) }}
+                </h4>
+                <span class="text-[10px] font-bold text-slate-400">DH</span>
+            </div>
+
+            <p class="text-[8px] mt-1 font-bold uppercase opacity-60">
+                @if($solde > 0)
+                    On vous doit de l'argent
+                @elseif($solde < 0)
+                    Vous avez des dettes
+                @else
+                    Vous êtes à jour
+                @endif
+            </p>
+        </div>
+    </div>
 </aside>

@@ -110,24 +110,77 @@
             </div>
         </div>
 
-        <!-- SECTION DÉPENSES -->
-        <div class="bg-white rounded-[3rem] p-10 border border-slate-100 shadow-sm mb-12">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-                <h4 class="text-xl font-black text-slate-800 italic uppercase tracking-tight">Dépenses Communes</h4>
+    <!-- SECTION FINANCIÈRE -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+        
+        <div class="lg:col-span-2 bg-white rounded-[3rem] p-8 border border-slate-100 shadow-sm">
+            <div class="flex justify-between items-center mb-8 px-2">
+                <h4 class="text-xl font-black text-slate-800 italic uppercase tracking-tight">Historique</h4>
                 @if(!$isCancelled)
-                <div class="flex items-center space-x-3">
+                <div class="flex gap-2">
                     @if($isOwner)
-                        <button @click="openCategoryModal = true" class="bg-white border-2 border-slate-100 text-slate-600 px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:border-indigo-100 hover:text-indigo-600 transition-all">Gérer Catégories</button>
+                    <button @click="openCategoryModal = true" class="p-2 border border-slate-100 rounded-xl hover:bg-slate-50 transition"><svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 11h.01M7 15h.01M13 7h.01M13 11h.01M13 15h.01M17 7h.01M17 11h.01M17 15h.01"></path></svg></button>
                     @endif
-                    <button @click="openExpenseModal = true" class="bg-slate-900 text-white px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-slate-100 hover:bg-indigo-600 transition-all">Nouvelle Dépense</button>
+                    <button @click="openExpenseModal = true" class="bg-slate-900 text-white px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-600 transition">Nouvelle Dépense</button>
                 </div>
                 @endif
             </div>
 
-            <div class="text-center py-10">
-                <p class="text-slate-400 text-sm italic font-medium">Aucune dépense enregistrée pour le moment.</p>
+            <div class="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+                @forelse($colocation->depenses->sortByDesc('date_depense') as $depense)
+                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 group hover:border-indigo-100 transition-all">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm text-indigo-600 font-bold text-xs">
+                                {{ $depense->categorie->nom_categorie[0] ?? '?' }}
+                            </div>
+                            <div>
+                                <p class="text-xs font-black text-slate-800 uppercase italic">{{ $depense->titre }}</p>
+                                <p class="text-[9px] text-slate-400 font-bold">Payé par {{ $depense->payeur->name }} • {{ \Carbon\Carbon::parse($depense->date_depense)->format('d M') }}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-black text-slate-900">{{ number_format($depense->montant, 2) }}DH</p>
+                            <p class="text-[8px] text-indigo-500 font-black uppercase tracking-widest">{{ $depense->categorie->nom_categorie ?? 'Dépense' }}</p>
+                        </div>
+                    </div>
+                @empty
+                    <div class="text-center py-10">
+                        <p class="text-slate-400 text-sm italic font-medium">Aucune dépense pour le moment.</p>
+                    </div>
+                @endforelse
             </div>
         </div>
+
+        <div class="bg-indigo-600 rounded-[3rem] p-8 shadow-xl shadow-indigo-100 relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
+            
+            <h4 class="text-white text-lg font-black italic uppercase tracking-tight mb-6 relative">À rembourser</h4>
+
+            <div class="space-y-4 relative">
+                @forelse($mesDettes as $dette)
+                    <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <p class="text-[10px] text-indigo-100 font-bold uppercase">{{ $dette->membership->user->name }} doit payé {{ number_format($dette->montant_a_payer, 2) }}DH à {{ $dette->depense->payeur->name }}</p>
+                            </div>
+                        </div>
+                        
+                        <form action="{{ route('dettes.payer', $dette->id) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="w-full bg-white text-indigo-600 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-400 hover:text-white transition-all shadow-lg">
+                                Marquer payé
+                            </button>
+                        </form>
+                    </div>
+                @empty
+                    <div class="text-center py-10">
+                        <svg class="w-10 h-10 text-white/20 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        <p class="text-indigo-100 text-xs italic font-bold uppercase">Tout est en règle !</p>
+                    </div>
+                @endforelse
+            </div>
+        </div>
+    </div>
 
         <!-- MODALS -->
         @if(!$isCancelled)
@@ -167,7 +220,7 @@
                         @csrf
                         <input type="text" name="titre" required placeholder="Titre" class="w-full bg-slate-50 border-none rounded-xl py-3 px-4 text-sm font-bold">
                         <div class="grid grid-cols-2 gap-4">
-                            <input type="number" step="0.01" name="montant" required placeholder="Montant (€)" class="w-full bg-slate-50 border-none rounded-xl py-3 px-4 text-sm font-bold">
+                            <input type="number" step="0.01" name="montant" required placeholder="Montant (DH)" class="w-full bg-slate-50 border-none rounded-xl py-3 px-4 text-sm font-bold">
                             <input type="date" name="date_depense" value="{{ date('Y-m-d') }}" required class="w-full bg-slate-50 border-none rounded-xl py-3 px-4 text-sm font-bold">
                         </div>
                         <select name="categorie_id" required class="w-full bg-slate-50 border-none rounded-xl py-3 px-4 text-sm font-bold">
@@ -184,3 +237,4 @@
 
     </div>
 </x-app-layout>
+

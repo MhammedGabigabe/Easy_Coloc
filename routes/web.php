@@ -48,6 +48,9 @@ Route::post('/colocations/{colocation}/remove/{membership}', [ColocationControll
 Route::post('/colocations/{colocation}/depenses', [DepenseController::class, 'store'])
     ->name('depenses.store');
 
+Route::post('/dettes/{dette}/payer', [DepenseController::class, 'payerDette'])
+    ->name('dettes.payer');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

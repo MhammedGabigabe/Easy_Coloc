@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Colocation;
 use App\Models\Membership;
+use App\Models\Dette;
 use Illuminate\Support\Str;
 use App\Http\Requests\StoreColocationRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+
 
 
 
@@ -69,8 +71,20 @@ class ColocationController extends Controller
      */
     public function show(string $id)
     {
-        $colocation = Colocation::with(['memberships'])->findOrFail($id);
-        return view('colocation_show', compact('colocation'));
+        $colocation = Colocation::with([
+            'memberships.user', 
+            'categories', 
+            'depenses.payeur', 
+        ])->findOrFail($id);
+
+        $mesDettes = Dette::whereHas('membership', function($q) use ($id) {
+                $q->where('colocation_id', $id)->where('user_id', auth()->id());
+            })
+            ->where('statut_dette', false)
+            ->with('depense.payeur')
+            ->get();
+
+        return view('colocation_show', compact('colocation', 'mesDettes'));
     }
 
     /**
