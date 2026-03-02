@@ -49,14 +49,6 @@ class User extends Authenticatable
         ];
     }
 
-    public function activeColocation()
-    {
-        return $this->belongsToMany(Colocation::class, 'memberships', 'user_id', 'colocation_id')
-                    ->wherePivot('left_at', null)
-                    ->where('status', 'active')
-                    ->first();
-    }
-
     public function memberShips()
     {
         return $this->hasMany(MemberShip::class);
@@ -70,11 +62,6 @@ class User extends Authenticatable
     public function depensesPayees()
     {
         return $this->hasMany(Depense::class, 'createur_id');
-    }
-
-    public function isGlobalAdmin()
-    {
-        return $this->role === 'admin';
     }
 
 

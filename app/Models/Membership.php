@@ -25,6 +25,11 @@ class Membership extends Model
         return $this->belongsTo(Colocation::class);
     }
 
+    public function depenses()
+    {
+        return $this->hasMany(Depense::class);
+    }
+
     public function dettes()
     {
         return $this->hasMany(Dette::class);

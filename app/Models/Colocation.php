@@ -29,17 +29,6 @@ class Colocation extends Model
         return $this->hasMany(Membership::class);
     }
 
-    public function membresActifs()
-    {
-        return $this->belongsToMany(User::class, 'memberships', 'colocation_id', 'membre_id')
-                    ->wherePivot('left_at', null);
-    }
-
-    public function depenses()
-    {
-        return $this->hasMany(Depense::class);
-    }
-
     public function categories()
     {
         return $this->belongsToMany(Categorie::class, 'categorie_colocation', 'colocation_id', 'categorie_id');

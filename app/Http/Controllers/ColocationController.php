@@ -69,7 +69,7 @@ class ColocationController extends Controller
      */
     public function show(string $id)
     {
-        $colocation = Colocation::with(['memberships', 'categories'])->findOrFail($id);
+        $colocation = Colocation::with(['memberships'])->findOrFail($id);
         return view('colocation_show', compact('colocation'));
     }
 

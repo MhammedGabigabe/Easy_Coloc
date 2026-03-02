@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Depense extends Model
 {
     public $timestamps = false;
-    
+
     protected $fillable = [
         'titre', 
         'montant', 
@@ -19,11 +19,6 @@ class Depense extends Model
     public function payeur()
     {
         return $this->belongsTo(User::class, 'createur_id');
-    }
-
-    public function colocation()
-    {
-        return $this->belongsTo(Colocation::class);
     }
 
     public function categorie()
