@@ -25,8 +25,8 @@ class ColocationController extends Controller
 
         $memberships = Membership::with('colocation')
             ->where('user_id', $userId) 
-            ->whereHas('colocation')     
-            ->whereNotIn('colocation_id', $ownedColocations->pluck('id'))
+            ->whereHas('colocation') 
+            ->whereNotIn('colocation_id', $ownedColocations->pluck('id'))    
             ->whereNull('left_at')
             ->get();
 
@@ -47,24 +47,32 @@ class ColocationController extends Controller
 
     public function store(StoreColocationRequest $request)
     {
-
-        return DB::transaction(function () use ($request) {
+            $colocationExiste = Colocation::where('owner_id', Auth::id())->where('status', 'active')->first();
             
-            $colocation = Colocation::create([
-                'nom_coloc' => $request->validated('nom_coloc'),
-                'owner_id' => Auth::id(),
-            ]);
+            if($colocationExiste != null){
+                    return redirect()
+                        ->route('colocations.index')
+                        ->with('error', 'Vous avez déjà une colocation active.');
+            }else{
 
-            Membership::create([
-                'colocation_id' => $colocation->id,
-                'user_id'     => Auth::id(), 
-                'role_coloc'    => 'owner',
-                'joined_at'     => now(),    
-            ]);
             
-            return redirect()->route('colocations.index');
-        });
-    }
+                DB::transaction(function () use ($request) {
+            
+                $colocation = Colocation::create([
+                    'nom_coloc' => $request->validated('nom_coloc'),
+                    'owner_id' => Auth::id(),
+                ]);
+
+                Membership::create([
+                    'colocation_id' => $colocation->id,
+                    'user_id'     => Auth::id(), 
+                    'role_coloc'    => 'owner',
+                    'joined_at'     => now(),    
+                ]);
+            });
+
+            return redirect()->route('colocations.index')->with('success', 'Colocation créée avec succès');
+    }}
 
     /**
      * Display the specified resource.
@@ -72,19 +80,31 @@ class ColocationController extends Controller
     public function show(string $id)
     {
         $colocation = Colocation::with([
-            'memberships.user', 
-            'categories', 
-            'depenses.payeur', 
+            'memberships' => function($q) {
+                $q->whereNull('left_at');
+            },
+            'memberships.user',
+            'categories',
+            'depenses.payeur',
         ])->findOrFail($id);
 
-        $mesDettes = Dette::whereHas('membership', function($q) use ($id) {
-                $q->where('colocation_id', $id)->where('user_id', auth()->id());
+        $userId = auth()->id();
+
+        $mesDettes = Dette::whereHas('membership', function($q) use ($id, $userId) {
+                $q->where('colocation_id', $id)->where('user_id', $userId);
             })
             ->where('statut_dette', false)
             ->with('depense.payeur')
             ->get();
 
-        return view('colocation_show', compact('colocation', 'mesDettes'));
+        $dettesQuOnMeDoit = Dette::whereHas('depense', function($q) use ($id, $userId) {
+                $q->where('colocation_id', $id)->where('createur_id', $userId);
+            })
+            ->where('statut_dette', false)
+            ->with('membership.user')
+            ->get();    
+
+        return view('colocation_show', compact('colocation', 'mesDettes', 'dettesQuOnMeDoit'));
     }
 
     /**
@@ -115,33 +135,76 @@ class ColocationController extends Controller
         }
 
         $colocation->update(['status' => 'cancelled']);
+        $colocation->update(['deleted_ar' => now()]);
 
         return redirect()->route('colocations.index')
             ->with('success', 'La colocation a été annulée avec succès.');
     }
 
-    public function leave(Colocation $colocation)
+    public function leave($colocationId)
     {
-        $membership = Membership::where('colocation_id', $colocation->id)
-            ->where('user_id', auth()->id())
+        $userId = auth()->id();
+        $colocation = Colocation::findOrFail($colocationId);
+
+        $membership = Membership::where('colocation_id', $colocationId)
+            ->where('user_id', $userId)
             ->whereNull('left_at')
             ->firstOrFail();
 
+        $dettesImpaye = Dette::where('membership_id', $membership->id)
+            ->where('statut_dette', false)
+            ->exists();
+
+        if ($dettesImpaye) {
+            auth()->user()->decrement('reputation');
+
+            $this->transferDebtsToOwner($colocation, $membership);
+            $message = "Vous avez quitté la coloc en règle (-1 rép).";
+        } else {
+            auth()->user()->increment('reputation');
+            $message = "Vous avez quitté la coloc en règle (+1 rép).";
+        }
+
         $membership->update(['left_at' => now()]);
 
-        // TODO: Gérer ici la logique de réputation (Scénario 3 du projet)
-        // Si dette > 0 -> reputation -1, sinon +1
-
-        return redirect()->route('colocations.index')->with('success', 'Vous avez quitté la colocation.');
+        return redirect()->route('colocations.index')->with('success', $message);
     }
 
-    public function removeMember(Colocation $colocation, Membership $membership) {
-        // Sécurité : seul l'owner peut faire ça
-        if (Auth::id() !== $colocation->owner_id) abort(403);
+    public function removeMember($colocationId, $membershipId)
+    {
+        $colocation = Colocation::findOrFail($colocationId);
+        if (auth()->id() !== $colocation->owner_id) abort(403);
 
-        // TODO: Si le membre a des dettes, les réattribuer à l'owner (règle 5.5)
-        // $membership->update(['left_at' => now()]);
-        
-        return back()->with('success', 'Membre retiré.');
+        $membership = Membership::findOrFail($membershipId);
+        $user = $membership->user;
+
+        $dettesImpaye = Dette::where('membership_id', $membership->id)
+            ->where('statut_dette', false)
+            ->exists();
+
+        if ($dettesImpaye) {
+            $this->transferDebtsToOwner($colocation, $membership);
+            $msg = "Membre retiré. Ses dettes vous ont été imputées.";
+        } else {
+            $user->increment('reputation');
+            $msg = "Membre retiré.";
+        }
+
+        $membership->update(['left_at' => now()]);
+
+        return back()->with('success', $msg);
+    }
+
+    private function transferDebtsToOwner(Colocation $colocation, Membership $memberMembership)
+    {
+        $ownerMembership = Membership::where('colocation_id', $colocation->id)
+            ->where('user_id', $colocation->owner_id)
+            ->first();
+
+        if ($ownerMembership) {
+            Dette::where('membership_id', $memberMembership->id)
+                ->where('statut_dette', false)
+                ->update(['membership_id' => $ownerMembership->id]);
+        }
     }
 }

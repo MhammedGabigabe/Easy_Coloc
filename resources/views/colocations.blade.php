@@ -1,6 +1,18 @@
 <x-app-layout>
     <div x-data="{ openCreateModal: false }" 
          class="px-4 py-4 sm:px-6 lg:px-8 bg-[#f8fafc] h-screen overflow-hidden relative">
+
+         @if(session('success'))
+            <div class="bg-green-100 text-green-700 px-4 py-3 rounded-lg mb-4">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="bg-red-100 text-red-700 px-4 py-3 rounded-lg mb-4">
+                {{ session('error') }}
+            </div>
+        @endif
         
         <!-- HEADER -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mt-4 mb-6 gap-4">

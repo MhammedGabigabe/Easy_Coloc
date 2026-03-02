@@ -89,7 +89,6 @@
                                 <span class="text-[8px] font-black text-slate-400 uppercase tracking-tighter">
                                     {{ $membership->role_coloc }}
                                 </span>
-                                <!-- LOGIQUE DE RÉPUTATION : ROUGE SI < 0, VERT SI >= 0 -->
                                 <span class="text-[8px] font-black {{ $userRep < 0 ? 'text-red-600 bg-red-50 border border-red-100' : 'text-emerald-600 bg-emerald-50 border border-emerald-100' }} px-2 py-0.5 rounded-md italic">
                                     Rép: {{ $userRep > 0 ? '+' : '' }}{{ $userRep }}
                                 </span>
@@ -97,10 +96,11 @@
                         </div>
                     </div>
 
+                    {{-- BOUTON RETIRER : Uniquement si OWNER et si l'utilisateur sur la carte n'est pas l'OWNER connecté --}}
                     @if(!$isCancelled && $isOwner && $membership->user_id !== Auth::id())
-                        <form action="{{ route('colocations.remove-member', [$colocation->id, $membership->id]) }}" method="POST" onsubmit="return confirm('Retirer ce membre ?');">
+                        <form action="{{ route('colocations.remove-member', [$colocation->id, $membership->id]) }}" method="POST" onsubmit="return confirm('Retirer ce membre ? Ses dettes vous seront réattribuées.');">
                             @csrf
-                            <button type="submit" class="p-2 text-slate-200 hover:text-red-500 transition-colors">
+                            <button type="submit" class="p-2 text-slate-200 hover:text-red-500 transition-colors" title="Retirer ce membre">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6"></path></svg>
                             </button>
                         </form>
@@ -139,7 +139,7 @@
                             </div>
                         </div>
                         <div class="text-right">
-                            <p class="text-sm font-black text-slate-900">{{ number_format($depense->montant, 2) }}DH</p>
+                            <p class="text-sm font-black text-slate-900">{{ number_format($depense->montant, 2) }} DH</p>
                             <p class="text-[8px] text-indigo-500 font-black uppercase tracking-widest">{{ $depense->categorie->nom_categorie ?? 'Dépense' }}</p>
                         </div>
                     </div>
@@ -154,30 +154,49 @@
         <div class="bg-indigo-600 rounded-[3rem] p-8 shadow-xl shadow-indigo-100 relative overflow-hidden">
             <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
             
-            <h4 class="text-white text-lg font-black italic uppercase tracking-tight mb-6 relative">À rembourser</h4>
+            <h4 class="text-white text-lg font-black italic uppercase tracking-tight mb-6 relative">Situation des dettes</h4>
 
-            <div class="space-y-4 relative">
-                @forelse($mesDettes as $dette)
-                    <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20">
-                        <div class="flex justify-between items-start mb-3">
-                            <div>
-                                <p class="text-[10px] text-indigo-100 font-bold uppercase">{{ $dette->membership->user->name }} doit payé {{ number_format($dette->montant_a_payer, 2) }}DH à {{ $dette->depense->payeur->name }}</p>
-                            </div>
-                        </div>
+            <div class="space-y-4 relative max-h-[450px] overflow-y-auto pr-2">
+                @foreach($mesDettes as $dette)
+                    <div class="bg-white/20 backdrop-blur-md rounded-2xl p-4 border border-white/30 shadow-sm">
+                        <p class="text-[9px] text-indigo-100 font-black uppercase tracking-widest mb-1">À rembourser</p>
+                        <p class="text-xs text-white font-medium">
+                            Vous devez <span class="font-black">{{$dette->montant_a_payer }} DH</span> 
+                            à <span class="underline">{{ $dette->depense->payeur->name }}</span>
+                        </p>
                         
-                        <form action="{{ route('dettes.payer', $dette->id) }}" method="POST">
+                        <form action="{{ route('dettes.payer', $dette->id) }}" method="POST" class="mt-3">
                             @csrf
                             <button type="submit" class="w-full bg-white text-indigo-600 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-400 hover:text-white transition-all shadow-lg">
                                 Marquer payé
                             </button>
                         </form>
                     </div>
-                @empty
+                @endforeach
+
+                @foreach($dettesQuOnMeDoit as $dette)
+                    <div class="bg-indigo-800/40 backdrop-blur-sm rounded-2xl p-4 border border-indigo-400/30">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-[9px] text-emerald-300 font-black uppercase tracking-widest mb-1">À recevoir</p>
+                                <p class="text-xs text-white font-medium">
+                                    <span class="font-black">{{ $dette->membership->user->name }}</span> 
+                                    vous doit <span class="font-black text-emerald-400">{{ number_format($dette->montant_a_payer, 2) }} DH</span>
+                                </p>
+                            </div>
+                            <div class="bg-emerald-500/20 p-1 rounded-lg">
+                                <svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path></svg>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+
+                @if($mesDettes->isEmpty() && $dettesQuOnMeDoit->isEmpty())
                     <div class="text-center py-10">
                         <svg class="w-10 h-10 text-white/20 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                         <p class="text-indigo-100 text-xs italic font-bold uppercase">Tout est en règle !</p>
                     </div>
-                @endforelse
+                @endif
             </div>
         </div>
     </div>
@@ -237,4 +256,3 @@
 
     </div>
 </x-app-layout>
-
