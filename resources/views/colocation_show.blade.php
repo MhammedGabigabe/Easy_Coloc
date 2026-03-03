@@ -20,7 +20,6 @@
             </div>
         @endif
 
-        <!-- HEADER -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center pt-8 mb-8 gap-4 shrink-0">
             <div class="flex items-center space-x-4">
                 <a href="{{ route('colocations.index') }}" class="p-2 bg-white rounded-xl border border-slate-100 text-slate-400 hover:text-indigo-600 transition shadow-sm">
@@ -61,7 +60,6 @@
         </div>
 
 
-        <!-- GRILLE DES MEMBRES -->
         <div class="mb-12">
             <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300 mb-6 italic px-2">Membres ({{ $colocation->memberships->count() }})</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -109,7 +107,6 @@
             </div>
         </div>
 
-    <!-- SECTION FINANCIÈRE -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
         
         <div class="lg:col-span-2 bg-white rounded-[3rem] p-8 border border-slate-100 shadow-sm">
@@ -200,9 +197,8 @@
         </div>
     </div>
 
-        <!-- MODALS -->
+
         @if(!$isCancelled)
-            <!-- Modal Invite -->
             <div x-show="openInviteModal" x-transition class="fixed inset-0 z-[100] flex items-center justify-center p-4" style="display: none;">
                 <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-md" @click="openInviteModal = false"></div>
                 <div class="relative bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl border border-white">
@@ -216,7 +212,6 @@
                 </div>
             </div>
 
-            <!-- Modal Categorie -->
             <div x-show="openCategoryModal" x-transition class="fixed inset-0 z-[100] flex items-center justify-center p-4" style="display: none;">
                 <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-md" @click="openCategoryModal = false"></div>
                 <div class="relative bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl border border-white">
@@ -229,7 +224,6 @@
                 </div>
             </div>
 
-            <!-- Modal Dépense -->
             <div x-show="openExpenseModal" x-transition class="fixed inset-0 z-[100] flex items-center justify-center p-4" style="display: none;">
                 <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-md" @click="openExpenseModal = false"></div>
                 <div class="relative bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl border border-white overflow-hidden">

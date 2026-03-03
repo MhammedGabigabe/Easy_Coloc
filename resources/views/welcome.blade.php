@@ -8,7 +8,6 @@
     </head>
     <body class="antialiased bg-easy-dark text-white h-screen overflow-hidden">
         
-        <!-- Navigation Minimaliste -->
         <nav class="absolute top-0 w-full px-12 py-8 flex justify-between items-center z-50">
             <div class="flex items-center">
                 <span class="text-2xl font-bold tracking-tighter"><span class="text-easy-blue">Easy</span>Coloc</span>
@@ -26,12 +25,10 @@
             @endif
         </nav>
 
-        <!-- Section Hero -->
         <main class="h-full w-full flex items-center px-12 bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-slate-800 via-easy-dark to-easy-dark">
             
             <div class="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 
-                <!-- Texte et Actions (Gauche) -->
                 <div class="space-y-8 animate-fade-in">
                     <div>
                         <h1 class="text-6xl font-black leading-tight tracking-tighter">
@@ -56,13 +53,12 @@
                     </div>  
                 </div>
 
-                <!-- Image / Mockup (Droite) -->
                 <div class="relative hidden lg:flex justify-center items-center">
-                    <!-- Décoration lumineuse réduite proportionnellement -->
+
                     <div class="absolute w-56 h-56 bg-easy-blue/15 rounded-full blur-[70px]"></div>
                     
                     <div class="relative transform hover:rotate-1 transition-transform duration-700">
-                        <!-- Taille ajustée à 280px (un peu plus petit que max-w-xs) -->
+
                         <img src="{{ asset('images/h.png') }}" 
                             alt="EasyColoc App Preview" 
                             class="w-[280px] h-auto drop-shadow-[0_20px_20px_rgba(0,0,0,0.5)] rounded-[2.8rem] border-[5px] border-white/5 bg-easy-dark">
@@ -72,7 +68,7 @@
             </div>
         </main>
 
-        <!-- Footer très discret -->
+
         <footer class="absolute bottom-8 w-full text-center text-gray-600 text-[10px] uppercase tracking-[0.4em]">
             Propulsé par la simplicité • EasyColoc © {{ date('Y') }}
         </footer>

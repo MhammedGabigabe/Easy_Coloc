@@ -1,7 +1,6 @@
 <x-app-layout>
     <div class="px-4 sm:px-6 lg:px-8 bg-[#f8fafc] h-screen flex items-center justify-center overflow-hidden">
         
-        <!-- CARTE D'INVITATION CENTRÉE -->
         <div class="w-full max-w-lg bg-white rounded-[3rem] shadow-[0_40px_100px_rgba(0,0,0,0.1)] border border-white overflow-hidden transform hover:scale-[1.01] transition-transform duration-500">
 
             <div class="p-12 text-center">
@@ -14,7 +13,6 @@
                     En acceptant, vous pourrez partager vos dépenses, gérer les tâches communes et suivre votre réputation financière avec les autres membres.
                 </p>
 
-                <!-- BOUTONS D'ACTION -->
                 <div class="flex flex-col space-y-4">
                     <form action="{{ route('invitation.accept', ['token' => $invitation->token_email]) }}" method="POST">
                         @csrf
@@ -32,7 +30,6 @@
                 </div>
             </div>
 
-            <!-- Footer Badge -->
             <div class="bg-slate-50 py-4 text-center border-t border-slate-100">
                 <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest italic">Sécurisé par EasyColoc © {{ date('Y') }}</span>
             </div>

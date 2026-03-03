@@ -14,7 +14,6 @@
             </div>
         @endif
         
-        <!-- HEADER -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mt-4 mb-6 gap-4">
             <div>
                 <h2 class="text-3xl font-black uppercase italic tracking-tighter text-slate-800">
@@ -40,7 +39,6 @@
             </div>
         </div>
 
-        <!-- BOUTON NOUVELLE COLOC -->
         <button @click="openCreateModal = true"
             class="bg-indigo-600 mt-8 hover:bg-indigo-700 text-white px-8 py-3 rounded-[1.5rem] text-sm font-black shadow-xl shadow-indigo-100 transition-all transform hover:scale-105 active:scale-95 flex items-center space-x-3 uppercase tracking-widest">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -49,10 +47,8 @@
             <span>Nouvelle Colocation</span>
         </button>
 
-        <!-- GRID AVEC SCROLL INTERNE -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-16 max-h-[60vh] overflow-y-auto pr-2">
 
-            <!-- BOUCLE OWNER -->
             @foreach($ownedColocations as $coloc)
             <div class="bg-white rounded-[2.5rem] border-2 {{ $coloc->status === 'cancelled' ? 'border-red-50' : 'border-indigo-50' }} shadow-sm hover:shadow-xl transition-all duration-500 group overflow-hidden">
                 <div class="p-6">
@@ -84,7 +80,6 @@
             </div>
             @endforeach
 
-            <!-- BOUCLE MEMBER -->
             @foreach($memberships as $membership)
                 @if($membership->colocation)
                 <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-500 group overflow-hidden opacity-90 hover:opacity-100">
@@ -120,7 +115,6 @@
 
         </div>
 
-        <!-- MODAL CRÉATION -->
         <div x-show="openCreateModal"
              class="fixed inset-0 z-[100] flex items-center justify-center p-4"
              style="display: none;">

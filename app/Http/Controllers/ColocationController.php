@@ -86,7 +86,7 @@ class ColocationController extends Controller
             'memberships.user',
             'categories',
             'depenses.payeur',
-        ])->findOrFail($id);
+        ])->findOrFail($id);    
 
         $userId = auth()->id();
 
@@ -135,7 +135,7 @@ class ColocationController extends Controller
         }
 
         $colocation->update(['status' => 'cancelled']);
-        $colocation->update(['deleted_ar' => now()]);
+        $colocation->update(['deleted_at' => now()]);
 
         return redirect()->route('colocations.index')
             ->with('success', 'La colocation a été annulée avec succès.');
