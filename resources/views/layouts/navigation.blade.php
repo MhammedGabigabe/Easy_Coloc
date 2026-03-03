@@ -60,22 +60,6 @@
             </div>
         </div>
         
-        <!-- Bloc Solde Global (Style harmonisé) -->
-        <div class="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm">
-            <p class="text-[8px] font-black uppercase tracking-widest text-slate-400 mb-1 italic">Votre Solde Global</p>
-            <div class="flex items-center justify-between">
-                <span class="text-xs font-black {{ $solde > 0 ? 'text-emerald-500' : ($solde < 0 ? 'text-red-500' : 'text-slate-600') }} italic">
-                    {{ $solde > 0 ? '+' : '' }}{{ number_format($solde, 2) }} DH
-                </span>
-                
-                @if($solde > 0)
-                    <span class="text-[7px] font-bold uppercase px-2 py-0.5 rounded bg-emerald-50 text-emerald-600">À recevoir</span>
-                @elseif($solde < 0)
-                    <span class="text-[7px] font-bold uppercase px-2 py-0.5 rounded bg-red-50 text-red-600">Dettes</span>
-                @else
-                    <span class="text-[7px] font-bold uppercase px-2 py-0.5 rounded bg-indigo-50 text-indigo-600">À jour</span>
-                @endif
-            </div>
-        </div>
+
     </div>
 </aside>

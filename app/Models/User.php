@@ -65,17 +65,6 @@ class User extends Authenticatable
         return $this->hasMany(Depense::class, 'createur_id');
     }
 
-    public function getSoldeGlobalAttribute()
-    {
-        $aRecevoir = Dette::whereHas('depense', function($q) {
-            $q->where('createur_id', $this->id);
-        })->where('statut_dette', false)->sum('montant_a_payer');
 
-        $aPayer = Dette::whereHas('membership', function($q) {
-            $q->where('user_id', $this->id); 
-        })->where('statut_dette', false)->sum('montant_a_payer');
-
-        return $aRecevoir - $aPayer;
-    }
 
 }
