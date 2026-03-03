@@ -20,8 +20,10 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::post('/colocations', [ColocationController::class, 'store'])->name('colocations.store');
-Route::get('/colocations', [ColocationController::class, 'index'])->name('colocations.index');
-Route::get('/colocations/{id}', [ColocationController::class, 'show'])->name('colocations.show');
+Route::get('/colocations', [ColocationController::class, 'index'])->name('colocations.index')
+    ->middleware('auth');
+Route::get('/colocations/{id}', [ColocationController::class, 'show'])->name('colocations.show')
+    ->middleware('auth');
 Route::delete('/colocations/{id}', [ColocationController::class, 'destroy'])
     ->name('colocations.destroy');
 Route::post('/colocations/{colocation}/leave', [ColocationController::class, 'leave'])

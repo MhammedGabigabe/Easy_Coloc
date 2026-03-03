@@ -22,7 +22,7 @@ class AdminController extends Controller
             'banned_users' => User::where('is_banned', true)->count(),
         ];
 
-        $users = User::orderBy('created_at', 'desc')->paginate(10);
+        $users = User::where('role', "!=", 'admin')->orderBy('created_at', 'desc')->paginate(10);
 
         return view('admin_dashboard', compact('stats', 'users'));
     }
