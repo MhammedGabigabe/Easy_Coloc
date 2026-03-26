@@ -1,59 +1,197 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🏠 ColocApp — Gestionnaire de colocation partagée
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Une application web **monolithique MVC Laravel** permettant de gérer des colocations, suivre les dépenses partagées, calculer automatiquement les soldes et simplifier les remboursements entre colocataires.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## ✨ Fonctionnalités
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 👤 Utilisateurs
+- Inscription, connexion et gestion du profil
+- Le premier utilisateur inscrit est automatiquement promu **Admin Global**
+- Les utilisateurs bannis sont déconnectés automatiquement et bloqués
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 🏡 Colocations
+- Création d'une colocation (le créateur devient **Owner**)
+- Invitation des membres par **email + token unique**
+- Acceptation ou refus d'une invitation
+- Une seule colocation active par utilisateur à la fois
+- Départ d'un membre (`left_at`)
+- Annulation d'une colocation (`status = cancelled`)
 
-## Learning Laravel
+### 💸 Dépenses
+- Ajout d'une dépense (titre, montant, date, catégorie, payeur)
+- Historique complet des dépenses
+- Filtrage par mois
+- Statistiques par catégorie
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### ⚖️ Balances & Remboursements
+- Calcul automatique : total payé, part individuelle, solde
+- Vue synthétique **« Qui doit à qui »**
+- Réduction des dettes via l'enregistrement de paiements (« Marquer payé »)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### ⭐ Système de réputation
+- **+1** si départ ou annulation sans dette
+- **-1** si départ ou annulation avec dette
+- Si un owner retire un membre endetté, la dette est imputée à l'owner
 
-## Laravel Sponsors
+### 🛡️ Administration globale
+- Tableau de bord avec statistiques globales (utilisateurs, colocations, dépenses)
+- Bannissement / débannissement des utilisateurs
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## 🧱 Stack technique
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+| Composant | Technologie |
+|-----------|-------------|
+| Framework | Laravel (MVC monolithique) |
+| Base de données | MySQL / PostgreSQL |
+| ORM | Eloquent (`hasMany`, `belongsToMany`) |
+| Authentification | Laravel Breeze / Jetstream |
+| Frontend | Blade + Tailwind CSS |
+| Mails | Laravel Mail (invitations par token) |
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 👥 Rôles
 
-## Code of Conduct
+| Rôle | Description |
+|------|-------------|
+| **Member** | Membre standard d'une colocation |
+| **Owner** | Créateur et administrateur de sa colocation |
+| **Global Admin** | Administrateur plateforme (stats + modération) |
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+> Un Admin Global peut également être Owner ou Member dans une ou plusieurs colocations.
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 🚀 Installation
 
-## License
+### Prérequis
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- PHP >= 8.1
+- Composer
+- Node.js & npm
+- MySQL ou PostgreSQL
+
+### Étapes
+
+```bash
+# 1. Cloner le dépôt
+git clone https://github.com/votre-utilisateur/colocapp.git
+cd colocapp
+
+# 2. Installer les dépendances PHP
+composer install
+
+# 3. Installer les dépendances JS
+npm install && npm run build
+
+# 4. Configurer l'environnement
+cp .env.example .env
+php artisan key:generate
+
+# 5. Configurer la base de données dans .env
+# DB_CONNECTION=mysql
+# DB_HOST=127.0.0.1
+# DB_PORT=3306
+# DB_DATABASE=colocapp
+# DB_USERNAME=root
+# DB_PASSWORD=
+
+# 6. Lancer les migrations
+php artisan migrate
+
+# 7. (Optionnel) Données de test
+php artisan db:seed
+
+# 8. Lancer le serveur
+php artisan serve
+```
+
+L'application est accessible sur [http://localhost:8000](http://localhost:8000).
+
+---
+
+## 🔐 Premier utilisateur = Admin Global
+
+Le premier compte créé sur la plateforme est automatiquement promu **Admin Global**. Aucune configuration manuelle n'est nécessaire.
+
+---
+
+## 📋 Scénarios principaux
+
+### Invitation d'un membre
+1. L'owner envoie une invitation (token unique + email)
+2. L'invité reçoit un lien, accepte ou refuse
+3. L'email est vérifié contre l'invitation
+4. Si l'invité a déjà une colocation active → blocage
+5. Sinon → ajout comme membre
+
+### Ajout d'une dépense
+1. Un membre ajoute une dépense (payeur, montant, catégorie, date)
+2. Les soldes de tous les membres actifs sont recalculés
+3. La vue « qui doit à qui » se met à jour automatiquement
+
+### Départ avec dette
+1. Le membre quitte avec une dette → pénalité de réputation (-1)
+2. La dette est redistribuée via ajustements internes
+
+---
+
+## 📁 Structure du projet
+
+```
+app/
+├── Http/Controllers/       # Contrôleurs MVC
+├── Models/                 # Modèles Eloquent
+│   ├── User.php
+│   ├── Colocation.php
+│   ├── Expense.php
+│   ├── Payment.php
+│   └── Invitation.php
+├── Policies/               # Autorisations
+resources/
+├── views/                  # Templates Blade
+database/
+├── migrations/             # Migrations SQL
+├── seeders/                # Données de test
+routes/
+└── web.php                 # Routes principales
+```
+
+---
+
+## 🗺️ Routes principales
+
+| Méthode | URI | Description |
+|---------|-----|-------------|
+| GET | `/dashboard` | Tableau de bord utilisateur |
+| GET/POST | `/colocations/create` | Créer une colocation |
+| GET | `/colocations/{id}` | Voir une colocation |
+| POST | `/colocations/{id}/invite` | Inviter un membre |
+| GET | `/invitations/{token}/accept` | Accepter une invitation |
+| POST | `/expenses` | Ajouter une dépense |
+| GET | `/colocations/{id}/balances` | Voir les soldes |
+| POST | `/settlements/{id}/pay` | Marquer un paiement |
+| GET | `/admin/dashboard` | Dashboard admin global |
+
+---
+
+## 🔭 Hors périmètre (pistes d'évolution)
+
+- [ ] Paiement en ligne via **Stripe**
+- [ ] Notifications en **temps réel** (WebSockets)
+- [ ] **Calendrier** partagé des dépenses
+- [ ] **Export** des données (CSV / PDF)
+
+---
+
+## 📄 Licence
+
+Ce projet est sous licence [MIT](LICENSE).
+
+---
+
+> Développé avec ❤️ en Laravel.
