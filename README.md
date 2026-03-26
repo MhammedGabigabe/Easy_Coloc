@@ -22,7 +22,6 @@ Une application web **monolithique MVC Laravel** permettant de gérer des coloca
 ### 💸 Dépenses
 - Ajout d'une dépense (titre, montant, date, catégorie, payeur)
 - Historique complet des dépenses
-- Filtrage par mois
 - Statistiques par catégorie
 
 ### ⚖️ Balances & Remboursements
@@ -46,9 +45,9 @@ Une application web **monolithique MVC Laravel** permettant de gérer des coloca
 | Composant | Technologie |
 |-----------|-------------|
 | Framework | Laravel (MVC monolithique) |
-| Base de données | MySQL / PostgreSQL |
-| ORM | Eloquent (`hasMany`, `belongsToMany`) |
-| Authentification | Laravel Breeze / Jetstream |
+| Base de données | MySQL |
+| ORM | Eloquent |
+| Authentification | Laravel Breeze |
 | Frontend | Blade + Tailwind CSS |
 | Mails | Laravel Mail (invitations par token) |
 
