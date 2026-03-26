@@ -139,45 +139,6 @@ Le premier compte créé sur la plateforme est automatiquement promu **Admin Glo
 
 ---
 
-## 📁 Structure du projet
-
-```
-app/
-├── Http/Controllers/       # Contrôleurs MVC
-├── Models/                 # Modèles Eloquent
-│   ├── User.php
-│   ├── Colocation.php
-│   ├── Expense.php
-│   ├── Payment.php
-│   └── Invitation.php
-├── Policies/               # Autorisations
-resources/
-├── views/                  # Templates Blade
-database/
-├── migrations/             # Migrations SQL
-├── seeders/                # Données de test
-routes/
-└── web.php                 # Routes principales
-```
-
----
-
-## 🗺️ Routes principales
-
-| Méthode | URI | Description |
-|---------|-----|-------------|
-| GET | `/dashboard` | Tableau de bord utilisateur |
-| GET/POST | `/colocations/create` | Créer une colocation |
-| GET | `/colocations/{id}` | Voir une colocation |
-| POST | `/colocations/{id}/invite` | Inviter un membre |
-| GET | `/invitations/{token}/accept` | Accepter une invitation |
-| POST | `/expenses` | Ajouter une dépense |
-| GET | `/colocations/{id}/balances` | Voir les soldes |
-| POST | `/settlements/{id}/pay` | Marquer un paiement |
-| GET | `/admin/dashboard` | Dashboard admin global |
-
----
-
 ## 🔭 Hors périmètre (pistes d'évolution)
 
 - [ ] Paiement en ligne via **Stripe**
